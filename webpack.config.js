@@ -7,15 +7,19 @@ module.exports = {
     index: "./src/index.js",
     print: "./src/print.js",
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: "Output Managenment",
-    }),
-  ],
+  devtool: "inline-source-map",
+  devServer: {
+    static: "./dist",
+  },
+  // plugins: [
+  //   new HtmlWebpackPlugin({
+  //     title: "Output Managenment",
+  //   }),
+  // ],
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
-    clean:true
+    clean: true,
   },
   module: {
     rules: [

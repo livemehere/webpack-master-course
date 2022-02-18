@@ -200,3 +200,45 @@ plugins: [
 }
 ```
 
+## Using source maps
+
+- 지금 우리가 하고있는작업은 bundle.js로 모든 파일을 한데 모으는 것입니다. 만약에 콘솔이나, 에러가 발생했을때 로그창을 보면 어디에서 발생했다고 가르키고있을까요? 바로 bundle이겠죠, 모든 출처는 bundle 이 됨으로 에러를 추적하기 힘들것입니다. 그럴때 sass에서도 사용되는 map정보를 포함하도록 설정하면 추적할 수 있는 정보를 함꼐 번들링합니다.
+
+```js
+devtool: "inline-source-map"
+```
+
+> 이렇게 설정하면 console.log 든 에러든 번들링되기전의 자신의 파일을 가르키고 있습니다.
+
+
+## Choosing a Development Tool
+
+- 지금까지 매번 수정사항이 있을때마다 `npx webpack` 이나 `npm run build` 를 직접해주었는데, 이를 자동으로 감지하고 적용해주는 방법 3가지가 있습니다.
+
+### watch mode
+
+```bash
+npx webpack --watch
+```
+
+- watch 모드로 실행을 하게되면 변경사항이 발생할 시 자동으로 재 번들링을 시작합니다. 하지만 변경사항을 확인하려면 브라우저를 새로고침 해야합니다. 이것이 자동으로 되면 좋겠죠?
+
+### webpack-dev-server
+
+```bash
+npm i --save-dev webpack-dev-server 
+```
+
+```js
+  devServer: {
+    static: "./dist",
+  },
+```
+
+```bash
+npx webpack serve --open
+```
+
+- 데브 서버를 설치하고, config에서 서버로 동작시킬 디렉토리를 지정해줍니다. 그리고 serve옵션으로 실행하면 핫 리로딩까지 해주는 서버가 실행됩니다.
+- 서버는 localhost:8080에서 제공됩니다.
+- `--open` 속성까지 넣어주면 바로 열립니다.
