@@ -242,3 +242,114 @@ npx webpack serve --open
 - 데브 서버를 설치하고, config에서 서버로 동작시킬 디렉토리를 지정해줍니다. 그리고 serve옵션으로 실행하면 핫 리로딩까지 해주는 서버가 실행됩니다.
 - 서버는 localhost:8080에서 제공됩니다.
 - `--open` 속성까지 넣어주면 바로 열립니다.
+
+## Code Splitting
+
+- 웹팩은 번들링하는 과정에서 하나의 파일로 합치고있습니다. 하지만 원하는데로 분할 하는 몇가지 방법이 있습니다.
+
+### Entry Points
+
+```js
+entry: {
+    index: './src/index.js',
+    another: './src/another-module.js',
+},
+
+output: {
+    filename: 'main.js',
+        filename: '[name].bundle.js',
+        path: path.resolve(__dirname, 'dist'),
+},
+```
+
+- 이 방법은, entry에 분할하고자 하는 만큼의 파일명을 지정해주고, [name]으로 참조하여 각각의 파일로 분할합니다
+- 단점으로는, 엔트리의 청크 사이에 중복된 모듈이 있는경우에는 두 번들이 모두 포함되고, 동적으로 분할이아니라 직접 수동으로 분할해준다는 점이 있습니다.
+
+> 이외에도 4가지 정도 더있는데, 다루지않겠습니다. 그닥 유용 할거같지 않습니다.
+
+## Cashing 
+
+```js
+  output: {
+    filename: "[name].bundle.[contenthash].js",
+  },
+```
+
+- dist의 컨텐츠들은 클라이언트가 서버에 접속할때마다 리소스를 요청하는데, 매번 요청하는것은 비효율적입니다. 그래서 캐싱기술을 사용하여 변하지않은 리소스는 캐시된 상태로 유지하도록합니다.
+- 위와 같이 [contenthash] 를 붙여주면 고유한 해시를 추가하는데, 컨텐츠가 변경되면 이 해시값도 변경됩니다.
+
+## Production
+
+- 웹팩에서 development와 production 의 목표는 매우 다릅니다. 개발용은 강력한 소스매핑, localhost서버에서의 라이브로딩 등 이 있어야하고
+- 배포용의경우에는 번들의 최소화, 가벼운소스맵, 애셋 최적화에 목적을 둡니다.
+- 공식사이트에서 권장하는 바로는 webpack설정을 분리하여 작성하고, `webpack-merge` 유틸리티를 사용하는 것을 권장합니다.
+
+```bash
+npm install --save-dev webpack-merge
+```
+
+### 설정파일 3개로 분할
+
+```
+ |- webpack.common.js
+ |- webpack.dev.js
+ |- webpack.prod.js
+```
+
+- common에 공통적인요소를 넣고 dev와 prod 각각에 별도로 설정을 해주면 된다.
+
+#### webpack.common.js
+
+```js
+ const path = require('path');
+ const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+ module.exports = {
+   entry: {
+     app: './src/index.js',
+   },
+   plugins: [
+     new HtmlWebpackPlugin({
+       title: 'Production',
+     }),
+   ],
+   output: {
+     filename: '[name].bundle.js',
+     path: path.resolve(__dirname, 'dist'),
+     clean: true,
+   },
+ };
+```
+
+#### webpack.dev.js
+
+```js
+ const { merge } = require('webpack-merge');
+ const common = require('./webpack.common.js');
+
+ module.exports = merge(common, {
+   mode: 'development',
+   devtool: 'inline-source-map',
+   devServer: {
+     static: './dist',
+   },
+ });
+```
+
+#### webpack.prod.js
+
+```js
+ const { merge } = require('webpack-merge');
+ const common = require('./webpack.common.js');
+
+ module.exports = merge(common, {
+   mode: 'production',
+ });
+```
+
+## NPM Script
+
+```json
+"start": "webpack serve --open --config webpack.dev.js",
+"build": "webpack --config webpack.prod.js"
+```

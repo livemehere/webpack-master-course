@@ -15,3 +15,4 @@ function element() {
 console.log(Data);
 console.log(Notes);
 printMe();
+console.log(1);
