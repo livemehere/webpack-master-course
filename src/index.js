@@ -1,12 +1,17 @@
-import _ from 'lodash';
+import "./style.css";
+// import me from "./me.JPG";
+import Data from "./data.csv";
+import Notes from "./data.xml";
+import printMe from "./print";
 
-function component() {
-    const element = document.createElement('div');
-
-    // 이 라인이 동작하려면 현재 스크립트를 통해 포함된 Lodash가 필요합니다.
-    element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-
-    return element;
+function element() {
+  // const img = new Image();
+  // img.src = me;
+  //
+  // document.getElementById("root").appendChild(img);
 }
+// element();
 
-document.body.appendChild(component());
+console.log(Data);
+console.log(Notes);
+printMe();

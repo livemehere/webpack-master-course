@@ -1,0 +1,16 @@
+@font-face {
+  font-family: "KongFont";
+  src: url("./Hoengseong Hanu.ttf");
+  font-weight: 700;
+  font-style: normal;
+}
+
+* {
+  font-family: "KongFont";
+}
+
+body {
+  background-color: #333;
+  color: white;
+  /*background: url("./me.JPG");*/
+}
